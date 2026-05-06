@@ -632,6 +632,238 @@ const {
 
 ---
 
+## 📗 React
+
+### 데이터 선언
+
+- Vue : `ref`, `reactive` / React : `useState`
+- React 에서는 데이터 값을 직접 변경하지 않고 `setter` 함수를 이용
+
+```
+import { useState } from "react";
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  const [user, setUser] = useState({
+    name: "홍길동",
+    age: 20,
+  });
+  
+  setCount(count + 1);
+
+  return (
+    <div>
+      <p>{count}</p>
+      <p>{user.name}</p>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+### 이벤트 함수 선언
+
+- Vue : `@click`, `@change` / React : `onClick`, `onChange`, `onSubmit`
+
+```
+import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  const increase = () => {
+    setCount(count + 1);
+  };
+
+  return <button onClick={increase}>증가</button>;
+}
+
+export default Counter;
+```
+
+
+### 양방향 바인딩
+
+- Vue : `<input v-model="title" />`
+- React : 
+```
+<input
+  value={title}
+  onChange={(e) => setTitle(e.target.value)}
+/>
+```
+
+### computed vs useMemo
+
+- useMemo 함수 내 배열에 선언된 데이터 값이 바뀔때 다시 계산
+
+Vue
+
+```
+<script setup>
+import { ref, computed } from "vue";
+
+const price = ref(10000);
+const count = ref(2);
+
+const totalPrice = computed(() => {
+  return price.value * count.value;
+});
+</script>
+```
+
+React
+
+```
+import { useMemo, useState } from "react";
+
+function PriceExample() {
+  const [price, setPrice] = useState(10000);
+  const [count, setCount] = useState(2);
+
+  const totalPrice = useMemo(() => {
+    return price * count;
+  }, [price, count]);
+
+  return <p>총 가격: {totalPrice}</p>;
+}
+
+export default PriceExample;
+```
+
+### watch vs useEffect
+
+Vue
+
+```
+<script setup>
+import { ref, watch } from "vue";
+
+const keyword = ref("");
+
+watch(keyword, (newValue) => {
+  console.log("검색어 변경:", newValue);
+});
+</script>
+```
+
+React
+
+```
+import { useEffect, useState } from "react";
+
+function SearchExample() {
+  const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    console.log("검색어 변경:", keyword);
+  }, [keyword]);
+
+  return (
+    <input
+      value={keyword}
+      onChange={(e) => setKeyword(e.target.value)}
+    />
+  );
+}
+
+export default SearchExample;
+```
+
+
+### onMounted vs useEffect
+
+- useEffect 두 번째 인자로 빈 배열을 넣으면 컴포넌트가 처음 랜더링된 뒤 한번만 실행
+
+```
+useEffect(() => {
+  // 처음 한 번만 실행
+}, []);
+```
+
+### API 호출
+
+```
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+function PostList() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPosts = async () => {
+    setLoading(true);
+
+    try {
+      const res = await axios.get("/api/posts");
+      setPosts(res.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  return (
+    <div>
+      {loading && <p>로딩 중...</p>}
+
+      {posts.map((post) => (
+        <div key={post.id}>
+          <h3>{post.title}</h3>
+          <p>{post.content}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default PostList;
+```
+
+### 리스트 랜더링
+
+Vue
+
+```
+<template>
+  <div v-for="item in list" :key="item.id">
+    {{ item.name }}
+  </div>
+</template>
+```
+
+React
+
+```
+{list.map((item) => (
+  <div key={item.id}>
+    {item.name}
+  </div>
+))}
+```
+
+### 조건부 랜더링
+
+Vue : `v-if`, `v-else`, `v-show` / React : `삼항 연산자`, `&&`
+
+```
+{isLogin ? (
+  <p>로그인 상태입니다.</p>
+) : (
+  <p>로그인해주세요.</p>
+)}
+```
+
+---
+
 
 ## 📘 JavaScript
 
